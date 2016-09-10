@@ -1,0 +1,95 @@
+<html>
+
+	<body>
+		<div id="clock"></div>
+		<div id="start">Start test</div>
+		<div id="reset">Reset test</div>
+		<iframe id="ifrm"></iframe>
+	</body>
+
+	<script>
+		//=================================================
+		//from W3Schools: http://www.w3schools.com/js/js_cookies.asp
+		function setCookie(cname, cvalue, exdays) {
+		    var d = new Date();
+		    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+		    var expires = "expires="+d.toUTCString();
+		    document.cookie = cname + "=" + cvalue + "; " + expires;
+		}
+
+		function getCookie(cname) {
+		    var name = cname + "=";
+		    var ca = document.cookie.split(';');
+		    for(var i = 0; i < ca.length; i++) {
+		        var c = ca[i];
+		        while (c.charAt(0) == ' ') {
+		            c = c.substring(1);
+		        }
+		        if (c.indexOf(name) == 0) {
+		            return c.substring(name.length, c.length);
+		        }
+		    }
+		    return "";
+		}
+		function checkCookie() {
+		    var time = getCookie("startTime");
+		    var endTime = getCookie("endTime");
+		    var totalSeconds = (endTime - time);
+		    var minutes = Math.floor(totalSeconds / 60);
+		    var seconds = Math.floor(totalSeconds % 60);
+		    var el = document.getElementById('clock');
+		    if (time != "") {
+		        el.innerHTML = minutes + " Minutes, " + seconds + " Seconds";
+		    } else {
+				el.innerHTML = "No time recorded";        
+		    }
+		}
+		//=================================================
+
+		//insert list of web pages to cycle through here
+		var pages = [
+			"http://www.arstechnica.com/civis",
+			"http://www.engadget.com",
+			"http://www.fmylife.com"
+			];
+	
+		var ifrm = document.getElementById('ifrm');
+
+		var index = 0;
+		var displayLength = 5000 //milliseconds
+		var cookieExpiry = 5 //number of days you want cookie to expire in
+		var start = document.getElementById('start');
+		var reset = document.getElementById('reset');
+		
+
+		start.addEventListener('click', timer);
+		reset.addEventListener('click', resetClock);
+
+		checkCookie();
+
+		function timer(){
+			setInterval(switchPage, displayLength);
+			currentTime = new Date() / 1000;
+			setCookie("startTime", currentTime, cookieExpiry);
+		}
+
+		function resetClock(){
+			clearInterval(timer);
+			document.cookie = "time=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+			checkCookie();
+		}
+	
+		function switchPage(){
+			if(index == pages.length){
+					index = 0;
+			}
+			currentTime = new Date() / 1000;
+			setCookie("endTime", currentTime, cookieExpiry);
+			checkCookie();
+			ifrm.src = pages[index];
+			index++;
+		}
+
+	</script>
+
+</html>
